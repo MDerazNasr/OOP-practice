@@ -1,3 +1,4 @@
+import heapq
 import threading
 from collections import defaultdict
 
@@ -8,10 +9,11 @@ class MetricTracker(threading.Thread):
         self._models = defaultdict(list)
         self._totals = defaultdict(int)
         self.lock = threading.Lock()
+        self.time = 0
 
     def record(self, model, latency):
         with self.lock:
-            self._models[model].append(latency)
+            heapq.heappush(self._models, (self.time, latency))
             self._totals[model] += latency
         return
 
